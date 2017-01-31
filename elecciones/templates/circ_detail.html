@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block head_title %}
+Elecciones | {{ block.super }}
+{% endblock head_title %}
+
+{% block content %}
+<br/>
+<div class='col-sm-6 col-sm-offset-3'>
+    <h1>Detalle</h1>
+    <hr>
+    	<a href="{% url 'sistema:home' %}">HOME</a> <br>
+    	<a href="{% url 'sistema:circ_list' %}">Lista de circunscripciones</a> <br>
+    	<a href="{% url 'sistema:circ_update' object.pk %}">Editar circunscripción</a> <br>
+    	<a href="{% url 'sistema:circ_delete' object.pk %}">Borrar circunscripción</a>
+    <hr>
+    <p>
+	    <li>{{ object.nombre }}</li>
+	    <li>{{ object.num_esc }} escaños</li>
+	    <a href="{% url 'sistema:mesa_list' id=object.pk %}">Ver sus mesas</a> <br>
+    </p>
+</div>
+
+{% endblock content %}

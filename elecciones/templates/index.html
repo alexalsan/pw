@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block head_title %}
+Elecciones | {{ block.super }}
+{% endblock head_title %}
+
+{% block content %}
+<br/>
+<div class='col-sm-6 col-sm-offset-3'>
+	<p>¡Hola {{ request.user }}!</p>
+    <h1>INICIO</h1>
+    <br>
+    <p>
+    	<a href="{% url 'login' %}">Iniciar sesión</a>
+    	<br>
+    	<a href="{% url 'logout' %}">Cerrar sesión</a>
+    	<br>
+    	<a href="{% url 'sistema:circ_list' %}">Lista de circunscripciones</a>
+    </p>
+</div>
+
+{% endblock content %}

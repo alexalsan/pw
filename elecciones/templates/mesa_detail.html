@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block head_title %}
+Elecciones | {{ block.super }}
+{% endblock head_title %}
+
+{% block content %}
+<br/>
+<div class='col-sm-6 col-sm-offset-3'>
+    <h1>Detalle</h1>
+    <hr>
+    	<a href="{% url 'sistema:home' %}">HOME</a> <br>
+    	<a href="{% url 'sistema:mesa_list' id=mesa.circunscripcion.id %}">Lista de mesas de {{ mesa.circunscripcion }}</a> <br>
+    	<a href="#">Editar Mesa</a>
+    <hr>
+    <p>
+	    <li> {{ mesa.nombre }} </li>
+        <li> Pertenece a la circunscripción: {{ mesa.circunscripcion }} </li>
+    </p>
+</div>
+
+{% endblock content %}

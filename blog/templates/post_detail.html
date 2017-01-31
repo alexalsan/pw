@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load urlify %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}
+{{ post_detallado.titulo }} | {{ block.super }}
+{% endblock head_title %}
+
+{% block content %}
+<br/>
+<P ALIGN=right>
+<a href="{% url "posts:list" %}" class="btn btn-primary" role="button">Ver todos los Posts</a>
+{% if registrado %}
+	<a href='{% url "posts:update" id=post_detallado.id %}' class="btn btn-success" role="button">Editar Post</a>
+	<a href='{% url "posts:delete" id=post_detallado.id %}' class="btn btn-success" role="button">Borrar Post</a>
+    <a href="{% url 'logout' %}" class="btn btn-danger" role="button">Cerrar sesión</a>
+{% else %}
+    <a href="{% url 'login' %}" class="btn btn-success" role="button">Iniciar sesión</a>
+{% endif %}
+</P>
+
+<div class='col-sm-6 col-sm-offset-3'>
+	{% if post_detallado.imagen %}
+		<img src='{{ post_detallado.imagen.url }}' class='img-responsive' />
+	{% endif %}
+
+	<h1>{{ post_detallado.titulo }}
+	{% if post_detallado.borrador %}
+	 <small> <span style="color: red">Borrador</span>
+	<br/>
+	Se publicará: {{ post_detallado.fecha_publicacion }}</small>
+	{% else %}
+	<small>
+	<br/>
+	Última actualización: {{ post_detallado.actualizado }}
+	</small>
+
+	{% endif %}
+	</h1>
+
+	<p> Autor:
+	{% if post_detallado.usuario.get_full_name %}
+		{{ post_detallado.usuario.get_full_name }}
+	{% else %}
+		{{ post_detallado.usuario }}
+	{% endif %}
+	</p>
+
+	<div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
+
+	<hr/>
+
+	{{ post_detallado.contenido|linebreaks }}<br/>
+	<P ALIGN=right><small>Fecha de creación: {{ post_detallado.publicado }}</small></P>
+
+	<hr/>
+
+	<div>
+		<p class="lead">Comentarios</p>
+
+		<form method="POST" action="."> {% csrf_token %}
+            {{ comentario_form|crispy                                                                                                                                                                              }}
+            <input type='submit' value='Publicar comentario' class='btn btn-default'>
+        </form>
+        <hr/>
+
+		{% for comentario in comentarios %}
+
+		<blockquote>
+			<p>{{ comentario.contenido }}</p>
+			<footer>
+				Escrito por
+				{% if comentario.usuario.get_full_name %}
+					{{ comentario.usuario.get_full_name }}
+				{% else %}
+					{{ comentario.usuario }}
+				{% endif %}
+					| Hace {{ comentario.publicado }}
+			</footer>
+
+			{% for respuesta in comentario.children %}
+
+			<blockquote>
+				<p>{{ respuesta.contenido }}</p>
+				<footer>
+					Escrito por
+					{% if respuesta.usuario.get_full_name %}
+						{{ respuesta.usuario.get_full_name }}
+					{% else %}
+						{{ respuesta.usuario }}
+					{% endif %}
+						| Hace {{ respuesta.publicado }}
+				</footer>
+			</blockquote>
+			<hr/>
+			{% endfor %}
+
+			<form method="POST" action="."> {% csrf_token %}
+				{{ comentario_form|crispy }}
+				<input type='hidden' name='parent_id' value='{{ comentario.id }}'>
+				<input type='submit' value='Responder' class='btn btn-default'>
+			</form>
+
+		</blockquote>
+		<hr/>
+		{% endfor %}
+	</div>
+</div>
+{% endblock content %}

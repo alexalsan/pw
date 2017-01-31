@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<br/>
+<div class='col-sm-6 col-sm-offset-3'>
+    <p>Has cerrado sesión correctamente</p>
+	<a href="{% url 'posts:list' %}" class='btn btn-primary' role='button'>Volver a la página principal</a>
+</div>
+{% endblock content %}

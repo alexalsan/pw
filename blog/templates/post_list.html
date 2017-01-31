@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block head_title %}
+Posts | {{ block.super }}
+{% endblock head_title %}
+
+{% block content %}
+<br/>
+<P ALIGN=right>
+    {% if registrado %}
+        ¡Hola
+        {% if request.user.first_name %}
+            {{ request.user.first_name }}
+        {% else %}
+            {{ request.user }}
+        {% endif %}
+        ! ||
+
+        <a href="{% url "posts:create" %}" class="btn btn-success" role="button">Crear Post</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger" role="button">Cerrar sesión</a>
+    {% else %}
+        Sólo los usuarios registrados pueden crear, editar y borrar Posts. <br>
+        <a href="{% url 'login' %}" class="btn btn-success" role="button">Iniciar sesión</a>
+    {% endif %}
+</P>
+
+<P ALIGN=center>
+    <img src='{{ imagen_portada.imagen.url }}' height="174" width="614.66" alt="Portada" />
+</P>
+
+<div class='col-sm-6 col-sm-offset-3'>
+    <h1>Lista de Posts</h1>
+
+    <form method='GET' action=''>
+    <input type='text' name='q' placeholder='Buscar Posts' value='{{ request.GET.q }}'/>
+    <input type='submit' value='Buscar' />
+    </form>
+
+    {% for obj in queryset %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="thumbnail">
+              	{% if obj.imagen %}
+        			<img src='{{ obj.imagen.url }}' class='img-responsive' />
+        		{% endif %}
+            <div class="caption">
+                <h3>
+                	<a href='{% url "posts:detail" id=obj.id %}'>{{ obj.titulo }}</a>
+
+                    <small>
+                    {% if obj.borrador %}
+                        <span style="color: red">Borrador</span>
+                    {% else %}
+                        Hace {{ obj.actualizado|timesince }}
+                    {% endif %}
+                    </small>
+                </h3>
+
+                <p>Autor:
+                {% if obj.usuario.get_full_name %}
+                    {{ obj.usuario.get_full_name }}
+                {% else %}
+                    {{ obj.usuario }}
+                {% endif %}
+                </p>
+                <hr/>
+                <p>{{ obj.contenido|linebreaks|truncatechars:150 }}</p>
+                <p>
+                	<a href="{% url "posts:detail" id=obj.id %}" class="btn btn-primary" role="button">Ver Post</a>
+                </p>
+              </div>
+            </div>
+        </div>
+    <hr/>
+    </div>
+    {% endfor %}
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if queryset.has_previous %}
+                <a href="?{{ page_request_var }}={{ queryset.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ queryset.number }} of {{ queryset.paginator.num_pages }}.
+            </span>
+
+            {% if queryset.has_next %}
+                <a href="?{{ page_request_var }}={{ queryset.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">next</a>
+            {% endif %}
+        </span>
+    </div>
+
+</div>
+
+{% endblock content %}
